@@ -65,7 +65,7 @@
     <!-- হেডার -->
     <header class="bg-red-600 text-white shadow-xl sticky top-0 z-50">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-black uppercase tracking-tighter italic">হাদিসমগ্র</h1>
+            <h1 class="text-2xl font-black uppercase tracking-tighter">হাদিসমগ্র</h1>
             <button onclick="toggleUploadModal(true)" class="bg-white text-red-600 px-5 py-2 rounded-full font-bold text-sm shadow-lg hover:bg-red-50 active:scale-95 transition-all">
                 + আপলোড করুন
             </button>
@@ -98,16 +98,16 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
-            <h2 class="text-3xl font-black text-red-600 mb-2 italic">ছবি পাঠান</h2>
+            <h2 class="text-3xl font-black text-red-600 mb-2">ছবি পাঠান</h2>
             <p class="text-gray-500 text-sm mb-8">স্ক্রিনশট পাঠানোর জন্য নিচের ফর্মটি পূরণ করুন।</p>
             
             <form id="custom-email-form" class="space-y-6">
                 <div>
-                    <label class="block text-[10px] font-black text-red-600 uppercase mb-2 tracking-widest">নাম</label>
+                    <label class="block text-s font-black text-red-600 uppercase mb-2 tracking-widest">নাম</label>
                     <input type="text" id="sender-name" name="name" placeholder="নাম লিখুন" required class="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-xl focus:border-red-500 outline-none transition-all placeholder:text-gray-300">
                 </div>
                 <div>
-                    <label class="block text-[10px] font-black text-red-600 uppercase mb-2 tracking-widest">ছবি সিলেক্ট করুন</label>
+                    <label class="block text-s font-black text-red-600 uppercase mb-2 tracking-widest">ছবি সিলেক্ট করুন</label>
                     <div class="relative group">
                         <input type="file" id="file-input" accept="image/*" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
                         <div class="w-full border-2 border-dashed border-gray-200 p-6 rounded-xl text-center group-hover:border-red-400 transition-colors">
@@ -293,3 +293,4 @@
     </script>
 </body>
 </html>
+

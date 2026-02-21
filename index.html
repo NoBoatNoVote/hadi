@@ -75,7 +75,6 @@
     <!-- গ্যালারি -->
     <main class="flex-grow p-4 lg:p-8">
         <div id="gallery" class="collage-grid"></div>
-        <!-- লোডিং ইন্ডিকেটর -->
         <div id="sentinel" class="h-40 flex justify-center items-center">
             <div id="loader-content" class="flex flex-col items-center gap-3">
                 <div class="animate-spin rounded-full h-10 w-10 border-4 border-red-100 border-t-red-600"></div>
@@ -87,11 +86,11 @@
     <!-- ফুটার -->
     <footer class="bg-red-600 text-white py-8 border-t-8 border-red-700 mt-auto">
         <div class="container mx-auto px-6 text-center">
-            <p class="text-sm font-bold tracking-widest opacity-90 uppercase">&copy; শা/উ/য়া হাদী ফ্যান</p>
+            <p class="text-sm font-bold tracking-widest opacity-90 uppercase">&copy; হাদী ফ্যান xD</p>
         </div>
     </footer>
 
-    <!-- আপলোড মোডাল (কাস্টম ফর্ম) -->
+    <!-- আপলোড মোডাল -->
     <div id="upload-modal" class="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 overflow-y-auto" onclick="toggleUploadModal(false)">
         <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative transform transition-transform duration-300" onclick="event.stopPropagation()">
             <button onclick="toggleUploadModal(false)" class="absolute top-5 right-5 text-gray-400 hover:text-red-600 transition-colors">
@@ -117,7 +116,6 @@
                     </div>
                 </div>
 
-                <!-- কাস্টম প্রগ্রেস বার -->
                 <div id="progress-container" class="space-y-2">
                     <div class="flex justify-between items-center">
                         <span id="progress-status-text" class="text-[10px] font-bold text-gray-400 uppercase tracking-widest italic">প্রসেসিং...</span>
@@ -129,7 +127,7 @@
                 </div>
 
                 <button type="submit" id="submit-btn" class="w-full bg-red-600 text-white font-black py-4 rounded-xl shadow-lg shadow-red-200 hover:bg-red-700 active:scale-95 transition-all uppercase tracking-widest">
-                    ছবি পাঠিয়ে দিন
+                    পাঠিয়ে দিন
                 </button>
                 <p id="status-msg" class="text-center text-xs font-bold uppercase mt-4"></p>
             </form>
@@ -143,7 +141,7 @@
 
     <script>
         // --- কনফিগারেশন ---
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx-cxX7iTBiclO_fxFlw5ALbiOKG5HUActQYQQ8JNOEUJZx41FeVYKI2_8DG5aOEd9-/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOLViJBy_h4zUu_gvv6K_0Rm41jNnY1nsuBI3Vh8NfkHZx-alErlW9CTGKG7e2WPU/exec";
         const ASSETS_PATH = 'assets/'; 
         const IMAGE_EXTENSION = '.jpg'; 
 
@@ -175,9 +173,12 @@
             fileLabel.classList.remove('text-red-600');
             progressContainer.style.display = 'none';
             statusMsg.innerText = "";
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = false;
+            btn.innerText = "পাঠিয়ে দিন";
         }
 
-        customForm.addEventListener('submit', async (e) => {
+        customForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = document.getElementById('submit-btn');
             const file = fileInput.files[0];
@@ -187,39 +188,42 @@
             btn.disabled = true;
             btn.innerText = "অপেক্ষা করুন...";
             progressContainer.style.display = 'block';
-            updateProgress(20, "ছবি রিড করা হচ্ছে...");
+            updateProgress(20, "ছবি প্রস্তুত হচ্ছে...");
 
-            try {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = async () => {
-                    updateProgress(50, "সার্ভারে কানেক্ট করা হচ্ছে...");
-                    
-                    const base64Data = reader.result.split(',')[1];
-                    const payload = {
-                        name: document.getElementById('sender-name').value,
-                        message: document.getElementById('sender-msg').value,
-                        filename: file.name,
-                        mimeType: file.type,
-                        data: base64Data
-                    };
-
-                    const response = await fetch(SCRIPT_URL, {
-                        method: 'POST',
-                        body: JSON.stringify(payload)
-                    });
-
-                    updateProgress(100, "সম্পন্ন!");
-                    statusMsg.className = "text-center text-xs font-bold uppercase text-green-600";
-                    statusMsg.innerText = "ছবি মেইলে পাঠানো হয়েছে!";
-                    
-                    setTimeout(() => toggleUploadModal(false), 2000);
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function() {
+                updateProgress(50, "সার্ভারে পাঠানো হচ্ছে...");
+                
+                const base64Data = reader.result.split(',')[1];
+                const payload = {
+                    name: document.getElementById('sender-name').value,
+                    message: document.getElementById('sender-msg').value,
+                    filename: file.name,
+                    mimeType: file.type,
+                    data: base64Data
                 };
-            } catch (err) {
-                statusMsg.className = "text-center text-xs font-bold uppercase text-red-600";
-                statusMsg.innerText = "ত্রুটি: আবার চেষ্টা করুন";
-                btn.disabled = false;
-            }
+
+                // 'POST' রিকোয়েস্ট পাঠানো হচ্ছে
+                fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload),
+                    mode: 'no-cors' 
+                }).then(() => {
+                    updateProgress(90, "শেষ পর্যায়ে...");
+                    setTimeout(() => {
+                        updateProgress(100, "সম্পন্ন!");
+                        statusMsg.className = "text-center text-xs font-bold uppercase text-green-600";
+                        statusMsg.innerText = "ছবি মেইলে পাঠানো হয়েছে! (মেইল চেক করুন)";
+                        setTimeout(() => toggleUploadModal(false), 3000);
+                    }, 1000);
+                }).catch(err => {
+                    statusMsg.className = "text-center text-xs font-bold uppercase text-red-600";
+                    statusMsg.innerText = "ত্রুটি ঘটেছে। আবার চেষ্টা করুন।";
+                    btn.disabled = false;
+                    btn.innerText = "মেইলে পাঠান";
+                });
+            };
         });
 
         function updateProgress(val, text) {
@@ -251,7 +255,6 @@
             img.onerror = () => {
                 container.remove();
                 consecutiveFails++;
-                // যদি ৩টি ছবি পরপর না পাওয়া যায়, তবে লোডিং বন্ধ করে দেওয়া হবে
                 if (consecutiveFails >= 3) {
                     stopLoading = true;
                     loaderContent.classList.add('hidden');
@@ -259,7 +262,7 @@
             };
 
             img.onload = () => {
-                consecutiveFails = 0; // ছবি পাওয়া গেলে কাউন্টার রিসেট হবে
+                consecutiveFails = 0;
             }
             
             container.appendChild(img);
